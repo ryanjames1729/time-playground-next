@@ -3,6 +3,9 @@
 import { useEffect, useState } from 'react';
 
 export default function Timer() {
+    const tickAudio = new Audio('https://freesound.org/data/previews/254/254316_4062622-lq.mp3');
+    const alarmAudio = new Audio('https://cdn.freesound.org/previews/24/24766_103578-hq.mp3')
+
     const [time, setTime] = useState(25*60);
     const [isActive, setIsActive] = useState(false);
     let minutes = Math.floor(time / 60);
@@ -16,11 +19,17 @@ export default function Timer() {
     let timeEntered = time;
     let breakTimeEntered = breakTime;
 
+    const [timeStarted, setTimeStarted] = useState(false);
+    const [breakStarted, setBreakStarted] = useState(false);
+
     const changeTime = () => {
         if (isActive && time > 0) {
             setTime(time-1);
             minutes = Math.floor(time / 60);
             seconds = time % 60;
+            if(time < 4 && time > 0) {
+                tickAudio.play();
+            }
         }
         if (time === 0 && !isBreakActive && isActive) {
             setIsActive(false);
@@ -28,11 +37,17 @@ export default function Timer() {
             setTime(10);
             minutes = Math.floor(time / 60);
             seconds = time % 60;
+            alarmAudio.play();
+            setBreakStarted(true);
+            setTimeStarted(false);
         }
         if (isBreakActive && breakTime > 0) {
             setBreakTime(breakTime-1);
             breakMinutes = Math.floor(breakTime / 60);
             breakSeconds = breakTime % 60;
+            if(time < 4 && time > 0) {
+                tickAudio.play();
+            }
         }
         if (breakTime === 0 && isBreakActive && !isActive) {
             setIsBreakActive(false);
@@ -40,6 +55,9 @@ export default function Timer() {
             setBreakTime(10);
             breakMinutes = Math.floor(breakTime / 60);
             breakSeconds = breakTime % 60;
+            alarmAudio.play();
+            setBreakStarted(false);
+            setTimeStarted(true);
         }
     
     }
@@ -73,7 +91,18 @@ export default function Timer() {
             </form>
             <button 
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full text-2xl"
-            onClick={() => setIsActive(!isActive)}>{isActive || isBreakActive ? 'PAUSE' : 'START'}</button>
+            onClick={() => {
+                if(!timeStarted && !breakStarted) {
+                    setIsActive(true);
+                    setTimeStarted(true);
+                }
+                if(timeStarted){
+                    setIsActive(!isActive);
+                }
+                if(breakStarted){
+                    setIsBreakActive(!isBreakActive);
+                }
+            }}>{isActive || isBreakActive ? 'PAUSE' : 'START'}</button>
             {isActive ? 
             <h1 className="text-lg lg:text-6xl text-white">Time: {minutes}:{seconds > 9 ? seconds : '0' + seconds}</h1> :
             <h1 className="text-lg lg:text-6xl text-gray-500">Time: {minutes}:{seconds > 9 ? seconds : '0' + seconds}</h1>
