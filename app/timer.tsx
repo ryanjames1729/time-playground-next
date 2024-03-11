@@ -3,8 +3,15 @@
 import { useEffect, useState } from 'react';
 
 export default function Timer() {
-    const tickAudio = new Audio('https://freesound.org/data/previews/254/254316_4062622-lq.mp3');
-    const alarmAudio = new Audio('https://cdn.freesound.org/previews/24/24766_103578-hq.mp3')
+    //const tickAudio = new Audio('https://freesound.org/data/previews/254/254316_4062622-lq.mp3');
+    //const alarmAudio = new Audio('https://cdn.freesound.org/previews/24/24766_103578-hq.mp3')
+
+    const [alarmAudio, setAlarmAudio] = useState<HTMLAudioElement | null>(null);
+    const [tickAudio, setTickAudio] = useState<HTMLAudioElement | null>(null);
+    useEffect(() => {
+        setTickAudio(new Audio('https://freesound.org/data/previews/254/254316_4062622-lq.mp3')) // only call client
+        setAlarmAudio(new Audio('https://cdn.freesound.org/previews/24/24766_103578-hq.mp3')) // only call client
+    })
 
     const [time, setTime] = useState(25*60);
     const [isActive, setIsActive] = useState(false);
@@ -28,7 +35,7 @@ export default function Timer() {
             minutes = Math.floor(time / 60);
             seconds = time % 60;
             if(time < 4 && time > 0) {
-                tickAudio.play();
+                tickAudio ? tickAudio.play() : null;
             }
         }
         if (time === 0 && !isBreakActive && isActive) {
@@ -37,7 +44,7 @@ export default function Timer() {
             setTime(10);
             minutes = Math.floor(time / 60);
             seconds = time % 60;
-            alarmAudio.play();
+            alarmAudio ? alarmAudio.play() : null;
             setBreakStarted(true);
             setTimeStarted(false);
         }
@@ -46,7 +53,7 @@ export default function Timer() {
             breakMinutes = Math.floor(breakTime / 60);
             breakSeconds = breakTime % 60;
             if(time < 4 && time > 0) {
-                tickAudio.play();
+                tickAudio ? tickAudio.play() : null;
             }
         }
         if (breakTime === 0 && isBreakActive && !isActive) {
@@ -55,7 +62,7 @@ export default function Timer() {
             setBreakTime(10);
             breakMinutes = Math.floor(breakTime / 60);
             breakSeconds = breakTime % 60;
-            alarmAudio.play();
+            alarmAudio ? alarmAudio.play() : null;
             setBreakStarted(false);
             setTimeStarted(true);
         }
