@@ -9,8 +9,12 @@ export default function Timer() {
     const [alarmAudio, setAlarmAudio] = useState<HTMLAudioElement | null>(null);
     const [tickAudio, setTickAudio] = useState<HTMLAudioElement | null>(null);
     useEffect(() => {
-        setTickAudio(new Audio('https://freesound.org/data/previews/254/254316_4062622-lq.mp3')) // only call client
+        if(!tickAudio){
+            setTickAudio(new Audio('https://freesound.org/data/previews/254/254316_4062622-lq.mp3')) // only call client
+        }
+        if(!alarmAudio){
         setAlarmAudio(new Audio('https://cdn.freesound.org/previews/24/24766_103578-hq.mp3')) // only call client
+        }
     })
 
     const [time, setTime] = useState(25*60);
